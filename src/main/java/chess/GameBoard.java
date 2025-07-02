@@ -252,6 +252,11 @@ public class GameBoard {
     }
 
     private boolean isValidRookMove(int fromRow, int fromCol, int toRow, int toCol, String color) {
+        // A piece cannot move to its current position
+        if (fromRow == toRow && fromCol == toCol) {
+            return false;
+        }
+
         // Check if move is horizontal or vertical
         if (fromRow != toRow && fromCol != toCol) {
             return false;
@@ -268,7 +273,7 @@ public class GameBoard {
             }
         } else { // Vertical move
             int startRow = Math.min(fromRow, toRow) + 1;
-            int endRow = Math.max(fromRow, toRow);
+            int endRow = Math.max(fromRow, toCol);
             for (int r = startRow; r < endRow; r++) {
                 if (getPiece(r, fromCol) != null) {
                     return false; // Path is blocked
