@@ -196,17 +196,19 @@ public class GameBoard {
         int opponentGeneralCol = -1;
 
         for (Map.Entry<String, Piece> entry : boardState.entrySet()) {
-            String pieceType = entry.getValue().getType();
-            if (color.equals("Red") && pieceType.equals("Black General")) {
-                String[] coords = entry.getKey().split(",");
-                opponentGeneralRow = Integer.parseInt(coords[0]);
-                opponentGeneralCol = Integer.parseInt(coords[1]);
-                break;
-            } else if (color.equals("Black") && pieceType.equals("Red General")) {
-                String[] coords = entry.getKey().split(",");
-                opponentGeneralRow = Integer.parseInt(coords[0]);
-                opponentGeneralCol = Integer.parseInt(coords[1]);
-                break;
+            if (entry.getValue() != null) {
+                String pieceType = entry.getValue().getType();
+                if (color.equals("Red") && pieceType.equals("Black General")) {
+                    String[] coords = entry.getKey().split(",");
+                    opponentGeneralRow = Integer.parseInt(coords[0]);
+                    opponentGeneralCol = Integer.parseInt(coords[1]);
+                    break;
+                } else if (color.equals("Black") && pieceType.equals("Red General")) {
+                    String[] coords = entry.getKey().split(",");
+                    opponentGeneralRow = Integer.parseInt(coords[0]);
+                    opponentGeneralCol = Integer.parseInt(coords[1]);
+                    break;
+                }
             }
         }
 
@@ -280,10 +282,12 @@ public class GameBoard {
         boolean redGeneralExists = false;
         boolean blackGeneralExists = false;
         for (Map.Entry<String, Piece> entry : boardState.entrySet()) {
-            if (entry.getValue().getType().equals("Red General")) {
-                redGeneralExists = true;
-            } else if (entry.getValue().getType().equals("Black General")) {
-                blackGeneralExists = true;
+            if (entry.getValue() != null) {
+                if (entry.getValue().getType().equals("Red General")) {
+                    redGeneralExists = true;
+                } else if (entry.getValue().getType().equals("Black General")) {
+                    blackGeneralExists = true;
+                }
             }
         }
         return !redGeneralExists || !blackGeneralExists;
