@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中國象棋棋子SVG生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .pieces-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .piece-container {
+            text-align: center;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .piece-container h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .piece-svg {
+            width: 80px;
+            height: 80px;
+            margin: 10px auto;
+            display: block;
+        }
+        .download-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .download-btn:hover {
+            background: #0056b3;
+        }
+        .download-all {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        .download-all:hover {
+            background: #1e7e34;
+        }
+        .red-piece { border-left: 4px solid #dc3545; }
+        .black-piece { border-left: 4px solid #343a40; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>中國象棋棋子SVG生成器</h1>
+    <p>點擊下方按鈕下載個別棋子的PNG圖片，或一次下載所有棋子。</p>
+
+    <button class="download-all" onclick="downloadAllPieces()">下載所有棋子PNG</button>
+
+    <div class="pieces-grid" id="piecesGrid">
+        <!-- 棋子將在這裡生成 -->
+    </div>
+</div>
+
+<script>
+    // 棋子定義
+    const pieces = [
+        { name: 'red_rook', chinese: '車', color: '#dc3545', type: 'red' },
+        { name: 'red_horse', chinese: '馬', color: '#dc3545', type: 'red' },
+        { name: 'red_elephant', chinese: '相', color: '#dc3545', type: 'red' },
+        { name: 'red_guard', chinese: '仕', color: '#dc3545', type: 'red' },
+        { name: 'red_general', chinese: '帥', color: '#dc3545', type: 'red' },
+        { name: 'red_cannon', chinese: '炮', color: '#dc3545', type: 'red' },
+        { name: 'red_soldier', chinese: '兵', color: '#dc3545', type: 'red' },
+        { name: 'black_rook', chinese: '車', color: '#343a40', type: 'black' },
+        { name: 'black_horse', chinese: '馬', color: '#343a40', type: 'black' },
+        { name: 'black_elephant', chinese: '象', color: '#343a40', type: 'black' },
+        { name: 'black_guard', chinese: '士', color: '#343a40', type: 'black' },
+        { name: 'black_general', chinese: '將', color: '#343a40', type: 'black' },
+        { name: 'black_cannon', chinese: '砲', color: '#343a40', type: 'black' },
+        { name: 'black_soldier', chinese: '卒', color: '#343a40', type: 'black' }
+    ];
+
+    // 創建SVG棋子
+    function createPieceSVG(piece) {
+        const svg = `
+                <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 棋子底盤 -->
+                    <circle cx="40" cy="40" r="35" fill="#f8f9fa" stroke="${piece.color}" stroke-width="3"/>
+                    <circle cx="40" cy="40" r="30" fill="none" stroke="${piece.color}" stroke-width="1"/>
+
+                    <!-- 文字 -->
+                    <text x="40" y="50" font-family="serif" font-size="24" font-weight="bold"
+                          text-anchor="middle" fill="${piece.color}">${piece.chinese}</text>
+                </svg>
+            `;
+        return svg;
+    }
+
+    // SVG轉PNG (透明背景)
+    function svgToPng(svgString, filename) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+
+        canvas.width = 80;
+        canvas.height = 80;
+
+        img.onload = function() {
+            // 不填充背景色，保持透明
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+
+            canvas.toBlob(function(blob) {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = URL.createObjectURL(blob);
+                link.click();
+                URL.revokeObjectURL(link.href);
+            }, 'image/png'); // 明確指定PNG格式
+        };
+
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(svgBlob);
+        img.src = url;
+    }
+
+    // 下載單個棋子
+    function downloadPiece(piece) {
+        const svg = createPieceSVG(piece);
+        svgToPng(svg, piece.name + '.png');
+    }
+
+    // 下載所有棋子
+    function downloadAllPieces() {
+        pieces.forEach((piece, index) => {
+            setTimeout(() => {
+                downloadPiece(piece);
+            }, index * 200); // 延遲下載避免瀏覽器阻擋
+        });
+    }
+
+    // 初始化頁面
+    function initializePage() {
+        const grid = document.getElementById('piecesGrid');
+
+        pieces.forEach(piece => {
+            const container = document.createElement('div');
+            container.className = `piece-container ${piece.type}-piece`;
+
+            const svg = createPieceSVG(piece);
+
+            container.innerHTML = `
+                    <h3>${piece.name}</h3>
+                    ${svg}
+                    <button class="download-btn" onclick="downloadPiece(${JSON.stringify(piece).replace(/"/g, '&quot;')})">
+                        下載 PNG
+                    </button>
+                `;
+
+            grid.appendChild(container);
+        });
+    }
+
+    // 頁面載入時初始化
+    window.onload = initializePage;
+</script>
+</body>
+</html>
