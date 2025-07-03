@@ -72,6 +72,21 @@ Feature: Chinese Chess (象棋) Rules
     When Red moves the Rook from 4, 1 to 4, 1
     Then the move is illegal
 
+  @Rook
+  Scenario: Red moves the Rook along a clear file (Legal)
+    Given the board is empty except for a Red Rook at 1, 9
+    When Red moves the Rook from 1, 9 to 2, 9
+    Then the move is legal
+
+  @Rook
+  Scenario: Red moves the Rook vertically with a blocking piece (Illegal)
+    Given the board has:
+      | Piece         | Position |
+      | Red Rook      | 3, 5   |
+      | Black Soldier | 6, 5   |
+    When Red moves the Rook from 3, 5 to 7, 5
+    Then the move is illegal
+
   #################################################################
   # 4) HORSE (馬/傌)
   #################################################################
