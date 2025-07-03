@@ -273,7 +273,7 @@ public class GameBoard {
             }
         } else { // Vertical move
             int startRow = Math.min(fromRow, toRow) + 1;
-            int endRow = Math.max(fromRow, toCol);
+            int endRow = Math.max(fromRow, toRow);
             for (int r = startRow; r < endRow; r++) {
                 if (getPiece(r, fromCol) != null) {
                     return false; // Path is blocked
